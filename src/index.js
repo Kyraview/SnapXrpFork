@@ -2,17 +2,30 @@ const xrpl = require("xrpl")
 import Accounts from './Accounts';
 import Utils from './Utils';
 module.exports.onRpcRequest = async ({ origin, request }) => {
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233")
-  const mnemonic = await Accounts.getBip39Mnemonic(3);
-  const xrpWallet = xrpl.Wallet.fromMnemonic(mnemonic);
+  let client;
+  if(request.testnet){
+    client = new xrpl.Client("wss://s.altnet.rippletest.net:51233")
+  }
+  else{
+    client = new xrpl.Client("wss://xrplcluster.com/");
+  }
+  const accounts = new Accounts(wallet);
+  const xrpWallet = await accounts.getCurrentAccount();
   
   switch (request.method) {
     case "getAddress":
+      
       return xrpWallet.address;
     case "getBalance":
       await client.connect()
-      const info = await client.getBalances(xrpWallet.address)
-      return info;
+      try{
+        return await client.getBalances(xrpWallet.address)
+      }
+      catch{
+        return [{currency: 'XRP', value: '0'}]
+      }
+    case "createAccount":
+      return (await accounts.createAccount(request.params.name)).address;
     case "getTransactions":
       return ""
     case "transfer":

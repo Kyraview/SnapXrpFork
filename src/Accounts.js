@@ -3,8 +3,11 @@ const bip39 = require('bip39')
 import {getBIP44AddressKeyDeriver} from "@metamask/key-tree"
 export default class Accounts{
 
-    static async getBip39Mnemonic(path){
-        console.log("here in generate Account")
+    constructor(wallet){
+        this.wallet = wallet;
+    }
+
+    static async generateAccount(path){
         const coinTypeNode = await wallet.request({
             method: 'snap_getBip44Entropy_144',
           });
@@ -19,7 +22,55 @@ export default class Accounts{
           const keypair = (await addressKeyDeriver(path));
           //create Entropy from private key so we can create a mnemonic
           const entropy = keypair.privateKeyBuffer.toString('hex')
-          let xrpMnemonic = bip39.entropyToMnemonic(entropy)
-          return xrpMnemonic.toString();
+          let mnemonic = bip39.entropyToMnemonic(entropy).toString()
+          return xrpl.Wallet.fromMnemonic(mnemonic);
     }
+
+    async createAccount(name, firstAccount=false){
+        const state = {}
+        let path;
+        if(!firstAccount){
+            const permaState = await this.wallet.request({
+                method: 'snap_manageState',
+                params: ['get'],
+            });
+            path = Object.keys(permaState.accounts).length;
+            state.accounts = permaState.accounts;
+        }
+        else{
+            path = 0;
+            state.accounts = {}
+        }
+        const xrplWallet = await Accounts.generateAccount(path);
+        const newAccount = {}
+        newAccount.name = name;
+        newAccount.address = xrplWallet.address;
+        newAccount.path = path;
+        newAccount.type = "generated";
+        state.accounts[newAccount.address] = newAccount;
+        state.currentAccount = newAccount;
+        this.accounts = await this.wallet.request({
+            method: 'snap_manageState',
+            params: ['update', state],
+        });
+        return xrplWallet;
+    }
+
+    async getCurrentAccount(){
+        this.accounts = await this.wallet.request({
+            method: 'snap_manageState',
+            params: ['get'],
+        });
+        if(this.accounts === null){
+            //create first account
+            return await this.createAccount("Account 1", true);
+        }
+        this.currentAccount = this.accounts.currentAccount;
+        if(this.currentAccount.type === 'generated'){
+            return await Accounts.generateAccount(this.currentAccount.path)
+        }
+        
+    }
+
+
 }
