@@ -83,14 +83,18 @@
       }
     }
     async function showBalance () {
+      console.log("here");
       try {
         const response = await ethereum.request({
           method: 'wallet_invokeSnap',
           params: [snapId, {
             method: 'getBalance',
-            testnet: testnetButton.checked
+            params:{
+              testnet: testnetButton.checked
+            }
           }]
         })
+        console.log("here")
         console.log(response)
         alert(response[0].value)
       } catch (err) {
@@ -103,8 +107,9 @@
         method: 'wallet_invokeSnap',
         params: [snapId, {
           method: 'transfer',
-          testnet: testnetButton.checked,
+          
           params:{
+            testnet: testnetButton.checked,
             to: sendAddress.value,
             amount: sendAmount.value,
           }

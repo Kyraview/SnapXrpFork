@@ -31,7 +31,7 @@
     "@metamask/eslint-config": "^8.0.0",
     "@metamask/eslint-config-jest": "^8.0.0",
     "@metamask/eslint-config-nodejs": "^8.0.0",
-    "@metamask/snaps-cli": "^0.20.0",
+    "@metamask/snaps-cli": "0.20.0",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
@@ -53,7 +53,7 @@
   "dependencies": {
     "@metamask/key-tree": "^4.0.0",
     "bip39": "^3.0.4",
-    "node": "^16.17.0",
-    "xrpl": "^2.3.1"
+    "buffer": "^6.0.3",
+    "xrpl": "^2.6.0"
   }
 }

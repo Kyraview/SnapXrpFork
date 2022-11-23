@@ -7,7 +7,7 @@
     "url": "https://github.com/MetaMask/snap-template.git"
   },
   "source": {
-    "shasum": "fpIaLwpU1Eb3Vlv4Qxe4+oj8ufqGMvHbY7sNk39vSWQ=",
+    "shasum": "IUHrKNihYrpwbqOhz7KqoKrNkUkviPZkwDIQr8N+d28=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -21,7 +21,11 @@
     "snap_confirm": {},
     "endowment:network-access": {},
     "snap_manageState": {},
-    "snap_getBip44Entropy_144": {},
+    "snap_getBip44Entropy": [
+      {
+        "coinType": 144
+      }
+    ],
     "endowment:long-running": {},
     "snap_notify": {}
   },

@@ -9,7 +9,10 @@ export default class Accounts{
 
     static async generateAccount(path){
         const coinTypeNode = await wallet.request({
-            method: 'snap_getBip44Entropy_144',
+            method: 'snap_getBip44Entropy',
+            params: {
+                coinType: 144,
+            },
           });
         
           //dirive private key using metamask key tree

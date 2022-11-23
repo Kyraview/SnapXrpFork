@@ -1,29 +1,42 @@
 const xrpl = require("xrpl")
 import Accounts from './Accounts';
+import { SocketClient } from './socketClient';
 import Utils from './Utils';
+
 module.exports.onRpcRequest = async ({ origin, request }) => {
   let client;
-  if(request.testnet){
-    client = new xrpl.Client("wss://s.altnet.rippletest.net:51233")
+  let simpleClient;
+  if(request.params && request.params.testnet){
+    console.log("here");
+    client = new xrpl.Client("wss://xrplcluster.com/")
+    simpleClient = new SocketClient("wss://s.altnet.rippletest.net/")
+    console.log("terminated")
   }
   else{
-    client = new xrpl.Client("wss://xrplcluster.com/");
+    client = new xrpl.Client("wss://s.altnet.rippletest.net/");
+    simpleClient = new SocketClient("wss://xrplcluster.com/")
   }
   const accounts = new Accounts(wallet);
   const xrpWallet = await accounts.getCurrentAccount();
+  console.log(`request ${request.method}`)
   
   switch (request.method) {
     case "getAddress":
       
       return xrpWallet.address;
     case "getBalance":
+      
+      //const balance = await simpleClient.getXRPBalance(xrpWallet.address)
+      console.log("here");
       await client.connect()
-      try{
-        return await client.getBalances(xrpWallet.address)
-      }
-      catch{
-        return [{currency: 'XRP', value: '0'}]
-      }
+      const response = await client.request({
+        "command": "account_info",
+        "account": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+        "ledger_index": "validated"
+      })
+      return response;
+        
+      
     case "createAccount":
       return (await accounts.createAccount(request.params.name)).address;
     case "getTransactions":
@@ -37,13 +50,15 @@ module.exports.onRpcRequest = async ({ origin, request }) => {
       if(!confirmation){
         throw "user Rejected Request"
       }
-      
+      console.log("about to prepair");
       const prepared = await client.autofill({
         "TransactionType": "Payment",
         "Account": address,
         "Amount": amount,
         "Destination": to,
       })
+      console.log("prepaired");
+      
 
       const signed = xrpWallet.sign(prepared);
       const txn = await client.submitAndWait(signed.tx_blob).then(
