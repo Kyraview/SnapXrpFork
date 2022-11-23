@@ -29,9 +29,9 @@ ethereum.request({ //etherem is a global value injected by metamask
       'npm:snap-xrp', //this tells metamask which snap to invoke
       { //request object to be sent to snap
          method: 'method name' // tells snap-xrp which method to call
-         testnet?: true||false // optional parameter to use testnet if ommited mainnet is assumed
+         
          params: { //some methods require additional params that serve as arguments for a given method
-
+            testnet?: true||false // optional parameter to use testnet if ommited mainnet is assumed
          }
       }
    ]
@@ -49,25 +49,27 @@ ethereum.request({
 })
 ```
 ### get wallet balance
-```javascript
+```typescript
 const response = await ethereum.request({
    method: 'wallet_invokeSnap',
    params: ['npm:snap-xrp', {
       method: 'getBalance',
-      testnet?:true||false
+      params:{
+         testnet?: true | false
+      }
    }]
 })
 ```
 ### send xrp
-```javascript
+```typescript
 const response = await ethereum.request({
    method: 'wallet_invokeSnap',
    params: ['npm:snap-xrp', {
       method: 'transfer',
-      testnet?:true||false,
+      testnet?:true | false,
       params:{
-      to: recepientAddress, //string
-      amount: Amount //integer number of drops
+         to: recepientAddress, //string
+         amount: Amount //integer number of drops
       }
    }
    ]
