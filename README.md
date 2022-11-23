@@ -1,6 +1,6 @@
 # SnapXRPL
-## XRP on MetaMask
-### [https://snapxrp.deatheye.repl.co/](https://snapxrp.deatheye.repl.co/)
+## XRP on MetaMask FORK
+### needs to be run with patch-package first
 
 <hr/>
 
