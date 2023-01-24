@@ -51,7 +51,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@metamask/key-tree": "^4.0.0",
+    "@metamask/key-tree": "^6.2.1",
     "bip39": "^3.0.4",
     "buffer": "^6.0.3",
     "xrpl": "^2.6.0"
